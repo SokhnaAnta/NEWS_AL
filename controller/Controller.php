@@ -1,8 +1,8 @@
 <?php
-require_once(__DIR__ . '/../modele/domaine/Article.php');
-require_once(__DIR__ . '/../modele/domaine/Categorie.php');
-require_once(__DIR__ . '/../modele/dao/ArticleDao.php');
-require_once(__DIR__ . '/../modele/dao/CategorieDao.php');
+require_once 'modele/domaine/Article.php';
+require_once 'modele/domaine/Categorie.php';
+require_once 'modele/dao/ArticleDao.php';
+require_once 'modele/dao/CategorieDao.php';
 
 
 
