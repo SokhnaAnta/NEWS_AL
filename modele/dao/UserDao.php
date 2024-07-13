@@ -38,12 +38,12 @@ class UserDAO {
     
 
     public function addUser($user) {
-        $stmt = $this->conn->prepare("INSERT INTO utilisateurs (nom, email, mot_de_passe,role,token) VALUES (?, ?, ?, ?,?)");
+        $stmt = $this->conn->prepare("INSERT INTO utilisateurs (nom, email, mot_de_passe, role,token) VALUES (?, ?, ?, ?,?)");
         $stmt->execute([$user->nom, $user->email, $user->mot_de_passe, $user->role,$user->token]);
     }
 
     public function updateUser($user) {
-        $stmt = $this->conn->prepare("UPDATE utilisateurs SET nom = ?, email = ?, mot_de_passe = ?, role =?, = ?token = ? WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE utilisateurs SET nom = ?, email = ?, mot_de_passe = ?, role = ?,token = ? WHERE id = ?");
 
         $stmt->execute([$user->nom, $user->email, $user->mot_de_passe, $user->role,$user->token, $user->id]);
     }
