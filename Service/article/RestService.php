@@ -3,7 +3,6 @@
 require_once(__DIR__ .'/../../modele/domaine/Article.php');
 require_once(__DIR__ .'/../../modele/dao/ArticleDAO.php');
 
-
 $articleDAO = new ArticleDAO();
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -24,7 +23,7 @@ function handleGETRequest($pathInfo, $articleDAO) {
     // Gestion des différentes routes GET
     switch ($pathSegments[1]) {
         case 'articles':
-            handleGetArticles($articleDAO, $pathSegments);
+            handleGetArticles($articleDAO);
             break;
         case 'articlesByCategory':
             handleGetArticlesByCategory($articleDAO, $pathSegments);
@@ -38,17 +37,22 @@ function handleGETRequest($pathInfo, $articleDAO) {
     }
 }
 
-function handleGetArticles($articleDAO, $pathSegments) {
+function handleGetArticles($articleDAO) {
     $format = $_GET['format'] ?? 'json';
 
     $articles = $articleDAO->getList();
+    $articlesArray = array_map(function($article) {
+        return $article->toArray();
+    }, $articles);
 
     if ($format === 'xml') {
         header('Content-Type: application/xml');
-        echo array_to_xml($articles, new SimpleXMLElement('<data/>'))->asXML();
+        $xml = new SimpleXMLElement('<data/>');
+        array_to_xml($articlesArray, $xml, 'article');
+        echo $xml->asXML();
     } else {
         header('Content-Type: application/json');
-        echo json_encode($articles);
+        echo json_encode($articlesArray);
     }
 }
 
@@ -64,39 +68,65 @@ function handleGetArticlesByCategory($articleDAO, $pathSegments) {
     }
 
     $articles = $articleDAO->getArticleByCategorie($categoryId);
+    $articlesArray = array_map(function($article) {
+        return $article->toArray();
+    }, $articles);
 
     if ($format === 'xml') {
         header('Content-Type: application/xml');
-        echo array_to_xml($articles, new SimpleXMLElement('<data/>'))->asXML();
+        $xml = new SimpleXMLElement('<data/>');
+        array_to_xml($articlesArray, $xml, 'article');
+        echo $xml->asXML();
     } else {
         header('Content-Type: application/json');
-        echo json_encode($articles);
+        echo json_encode($articlesArray);
     }
 }
 
 function handleGetArticlesGroupedByCategory($articleDAO) {
     $articlesByCategory = $articleDAO->getArticlesGroupedByCategory();
 
+    // Vérifiez si $articlesByCategory est bien un tableau
+    if (!is_array($articlesByCategory)) {
+        throw new Exception("Expected an array from getArticlesGroupedByCategory, got: " . gettype($articlesByCategory));
+    }
+
+    // Transformez les articles JSON en tableaux PHP
+    $articlesArray = array_map(function($category) {
+        // Décodez la chaîne JSON des articles en tableau PHP
+        $articles = json_decode($category['articles'], true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception("Error decoding JSON: " . json_last_error_msg());
+        }
+
+        return [
+            'categorie' => $category['categorie'],
+            'articles' => $articles
+        ];
+    }, $articlesByCategory);
+
     $format = $_GET['format'] ?? 'json';
 
     if ($format === 'xml') {
         header('Content-Type: application/xml');
-        echo array_to_xml($articlesByCategory, new SimpleXMLElement('<data/>'))->asXML();
+        $xml = new SimpleXMLElement('<data/>');
+        array_to_xml($articlesArray, $xml, 'category');
+        echo $xml->asXML();
     } else {
         header('Content-Type: application/json');
-        echo json_encode($articlesByCategory);
+        echo json_encode($articlesArray);
     }
 }
 
-function array_to_xml($array, &$xml) {
-    foreach ($array as $key => $value) {
+function array_to_xml($data, &$xml, $itemName) {
+    foreach ($data as $key => $value) {
         if (is_array($value)) {
-            if (!is_numeric($key)) {
-                $subnode = $xml->addChild("$key");
-                array_to_xml($value, $subnode);
-            } else {
-                array_to_xml($value, $xml);
+            if (is_numeric($key)) {
+                $key = $itemName; // Nommer les éléments numériques
             }
+            $subnode = $xml->addChild($key);
+            array_to_xml($value, $subnode, $itemName);
         } else {
             $xml->addChild("$key", htmlspecialchars("$value"));
         }

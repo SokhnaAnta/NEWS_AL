@@ -8,4 +8,8 @@ class Article {
     public $dateCreation ;
 	public $dateModification ;
     public $utilisateur_id ;
+
+    public function toArray() {
+        return get_object_vars($this);
+    }
 }
