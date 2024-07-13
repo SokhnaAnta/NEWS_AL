@@ -12,12 +12,19 @@
     <?php else : ?>
         <?php foreach ($articles as $article) : ?>
             <div class="article">
-                <h2><a href="index.php?action=article&id=<?= $article->id; ?>"><?= $article->titre; ?></a></h2>
-                <p><?= substr($article->contenu, 0, 150); ?>...</p>
+                <h2><a href="index.php?action=article&id=<?= htmlspecialchars($article->id); ?>"><?= htmlspecialchars($article->titre); ?></a></h2>
+                <p><?= htmlspecialchars(substr($article->contenu, 0, 150)); ?>...</p>
             </div>
         <?php endforeach; ?>
-    <?php endif;        
-?>
+    <?php endif; ?>
+</div>
+<div class="pagination">
+    <?php if ($currentPage > 1): ?>
+        <a href="index.php?page=<?= $currentPage - 1; ?>">&laquo; Précédent</a>
+    <?php endif; ?>
+    <?php if ($currentPage < $totalPages): ?>
+        <a href="index.php?&page=<?= $currentPage + 1; ?>">Suivant &raquo;</a>
+    <?php endif; ?>
 </div>
 </body>
 </html>

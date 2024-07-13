@@ -48,4 +48,18 @@ class ArticleDAO {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getListbyDC($offset, $limit) {
+        $sql = 'SELECT * FROM Article ORDER BY dateCreation DESC LIMIT :offset, :limit';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, 'Article');
+    }
+
+    // Méthode pour récupérer le nombre total d'articles
+    public function getTotalCount() {
+        $sql = 'SELECT COUNT(*) FROM Article';
+        return $this->conn->query($sql)->fetchColumn();
+    }
 }

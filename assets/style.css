@@ -3,7 +3,9 @@ body {
     margin: 0;
     padding: 0;
     background-color: #fdfdfd;
-    padding-bottom: 60px; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 h1 {
@@ -12,6 +14,16 @@ h1 {
     text-align: center;
     padding: 20px 0;
     margin: 0;
+}
+header, footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+header {
+    padding: 20px 0;
 }
 
 .navbar {
@@ -38,9 +50,7 @@ h1 {
 
 .wrapper {
     display: flex;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    flex: 1;
 }
 
 .sidebar {
@@ -48,7 +58,6 @@ h1 {
     background: #343a40;
     color: white;
     transition: width 0.3s;
-    position: relative;
 }
 
 .sidebar.active {
@@ -76,14 +85,14 @@ h1 {
     background-color: #555;
 }
 
-#content {
+main {
     flex-grow: 1;
     padding: 20px;
     transition: margin-left 0.3s;
     margin-left: 250px;
 }
 
-#content.active {
+main.active {
     margin-left: 60px;
 }
 
@@ -120,17 +129,21 @@ h1 {
     }
 }
 
-
 footer {
+    margin-top: auto;
     background-color: #333;
     color: white;
     text-align: center;
-    padding: 10px;
-    position: fixed; 
-    bottom: 0;
-    width: 100%;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
 
-
-
+.pagination a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+}

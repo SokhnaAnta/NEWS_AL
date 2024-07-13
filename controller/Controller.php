@@ -14,14 +14,23 @@ class Controller{
 
     public function accueil(){
         $articleDao = new ArticleDAO();
+        $articlesPerPage = 5; 
+        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1; 
+        $offset = ($currentPage - 1) * $articlesPerPage; 
+
+        $articles = $articleDao->getListbyDC($offset, $articlesPerPage);
+
+        $totalArticles = $articleDao->getTotalCount();
+        $totalPages = ceil($totalArticles / $articlesPerPage);
+
         $categorieDao = new CategorieDAO();
-        $articles = $articleDao->getList();
         $categories = $categorieDao->getList();
+
         require_once __DIR__ . '/../vue/inc/header.php';
         require_once __DIR__ . '/../vue/acceuil.php';
         require_once __DIR__ . '/../vue/inc/footer.php';
-
         return ;
+
     }
     public function accueilAdmin(){
         $articleDao = new ArticleDAO();
