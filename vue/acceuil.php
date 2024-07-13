@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESP NEWS</title>
+    <style>
+        a, a:visited, a:hover, a:active {
+    text-decoration: none;
+      }
+
+
+    </style>
 </head>
 <body>
 <div class="articles">
@@ -13,6 +20,7 @@
         <?php foreach ($articles as $article) : ?>
             <div class="article">
                 <h2><a href="index.php?action=article&id=<?= htmlspecialchars($article->id); ?>"><?= htmlspecialchars($article->titre); ?></a></h2>
+                <p class="date"><?= htmlspecialchars(date('d F Y', strtotime($article->dateCreation)), ENT_QUOTES, 'UTF-8'); ?></p>
                 <p><?= htmlspecialchars(substr($article->contenu, 0, 150)); ?>...</p>
             </div>
         <?php endforeach; ?>
